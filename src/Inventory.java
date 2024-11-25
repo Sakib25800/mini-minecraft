@@ -1,12 +1,21 @@
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Inventory {
     private final Map<String, Item> items;
     private final int maxWeight;
 
-    public Inventory(Map<String, Item> initialItems, int maxWeight) {
-        this.items = initialItems;
-        this.maxWeight = maxCapacity;
+    public Inventory(List<Item> initialItems, int maxWeight) {
+        this.maxWeight = maxWeight;
+        // We implicitly allow duplicates by using a List, so to counter this
+        // we check for duplicates and keep the last one
+        this.items = initialItems.stream()
+                .collect(Collectors.toMap(
+                        Item::getName,
+                        item -> item,
+                        (existing, replacement) -> replacement)
+                );
     }
 
     public Item removeItem(String itemName) {
