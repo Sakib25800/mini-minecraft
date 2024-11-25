@@ -39,7 +39,7 @@ blaze powder, find a stronghold, and activate the portal frame.
 ### Village
 
 - Items: Blaze Powder (2kg)
-- Description: A village where rare materials are left on the floor
+- Description: A village where rare materials remain
 
 ### Forest
 
