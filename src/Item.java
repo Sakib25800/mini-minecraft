@@ -13,6 +13,10 @@ public abstract class Item {
         return name;
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
     public String getDescription() {
         return description;
     }
