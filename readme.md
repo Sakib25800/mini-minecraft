@@ -79,7 +79,7 @@ To win, the player must:
 
 1. Get a Blaze Rod from the Nether
 2. Collect Blaze Powder from the Village
-3. Find an Ender Pearl in the Forest
+3. Kill Enderman for Ender Pearl in the Forest
 4. Combine these to create an Eye of Ender (Blaze Powder + Ender Pearl)
 5. Take it to the Portal Room to activate the portal
 

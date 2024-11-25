@@ -25,4 +25,6 @@ public abstract class Item {
     public String toString() {
         return "Item[name=" + name + ", description=" + description + ", weight=" + weight + "]";
     }
+
+    public abstract void use();
 }
