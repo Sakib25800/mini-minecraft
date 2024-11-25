@@ -1,9 +1,11 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class Room {
     private final String description;
     private final HashMap<String, Room> exits;        // stores exits of this room.
+    public Inventory inventory;
 
     /**
      * Create a room described "description". Initially, it has
@@ -17,6 +19,10 @@ public class Room {
         exits = new HashMap<>();
     }
 
+    public void initInventory(List<Item> initialItems, int maxWeight) {
+        this.inventory = new Inventory(initialItems, maxWeight);
+    }
+    
     /**
      * Define an exit from this room.
      *

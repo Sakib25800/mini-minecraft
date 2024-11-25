@@ -11,7 +11,7 @@ public abstract class Entity {
         this.name = name;
         this.currentRoom = startingRoom;
         this.roomHistory = new ArrayList<>();
-        
+
         roomHistory.add(startingRoom);
     }
 
@@ -34,6 +34,12 @@ public abstract class Entity {
 
     public Room getCurrentRoom() {
         return currentRoom;
+    }
+
+    public void die() {
+        // Drop all items into room in which Entity has died in
+        currentRoom.inventory.addItems(inventory.getAllItems());
+        inventory.clear();
     }
 
     public String getName() {
