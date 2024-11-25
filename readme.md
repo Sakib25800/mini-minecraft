@@ -64,10 +64,14 @@ blaze powder, find a stronghold, and activate the portal frame.
 
 ## Game Mechanics
 
+### Inventory System
+
+- Steve can only carry one instance of a given item
+
 ### Weight System
 
 - Maximum carrying capacity: 10kg
-- Players must manage inventory weight strategically
+- Steve must manage inventory weight strategically
 
 ### Win
 
