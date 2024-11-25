@@ -18,4 +18,10 @@ public class Inventory {
     public Item getItem(String itemName) {
         return this.items.get(itemName);
     }
+    
+    @Override
+    public String toString() {
+        String itemsList = String.join(", ", this.items.keySet());
+        return "Inventory(" + items.size() + "): " + itemsList + (itemsList.isEmpty() ? "" : ",");
+    }
 }
