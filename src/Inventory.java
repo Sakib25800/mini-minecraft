@@ -8,8 +8,8 @@ public class Inventory {
 
     public Inventory(List<Item> initialItems, int maxWeight) {
         this.maxWeight = maxWeight;
-        // We implicitly allow duplicates by using a List, so to counter this
-        // we check for duplicates and keep the last one
+        // We implicitly allow duplicates by using a List (used for convenience),
+        // so to counter this we check for duplicates and keep the last duplicate
         this.items = initialItems.stream()
                 .collect(Collectors.toMap(
                         Item::getName,
