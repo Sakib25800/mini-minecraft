@@ -16,7 +16,7 @@ public enum Room {
     END_PORTAL_ROOM("an end portal room");
 
     // Large number as no need for a room to have a max capacity
-    private static final int MAX_INVENTORY_CAPACITY = Integer.MAX_VALUE;
+    private static final int MAX_ITEM_CAPACITY = Integer.MAX_VALUE;
 
     static {
         // Initialise exits between rooms
@@ -38,16 +38,16 @@ public enum Room {
         ).forEach((room, exits) -> exits.forEach(room::setExit));
     }
 
-    public final Inventory inventory;
+    public final Inventory items;
     final HashMap<Direction, Room> exits;
     private final String description;
 
     Room(String description) {
         this.description = description;
         this.exits = new HashMap<>();
-        this.inventory = new Inventory(MAX_INVENTORY_CAPACITY, new ArrayList<>());
+        this.items = new Inventory(MAX_ITEM_CAPACITY, new ArrayList<>());
     }
-    
+
     /**
      * Sets an exit for this room in the specified direction to a neighboring room.
      *
@@ -83,7 +83,7 @@ public enum Room {
     }
 
     private String getItemsDescription() {
-        List<Item> itemsInRoom = inventory.getAllItems();
+        List<Item> itemsInRoom = items.getAllItems();
         StringBuilder sb = new StringBuilder("Items: ");
         if (itemsInRoom.isEmpty()) {
             sb.append("None");

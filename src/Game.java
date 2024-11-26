@@ -42,8 +42,8 @@ public class Game {
      * Initialises all items in the game and places them.
      */
     private void initRoomItems() {
-        Room.VILLAGE.inventory.addItem(Item.BLAZE_POWDER);
-        Room.STRONGHOLD.inventory.addItem(Item.IRON_SWORD);
+        Room.VILLAGE.items.addItem(Item.BLAZE_POWDER);
+        Room.STRONGHOLD.items.addItem(Item.IRON_SWORD);
     }
 
     /**
@@ -186,7 +186,7 @@ public class Game {
      */
     private void goBack() {
         player.goBack().ifPresentOrElse(
-                System.out::println,
+                System.out::println,    // output destination
                 () -> System.out.println("Can't go back.")
         );
     }
@@ -256,10 +256,10 @@ public class Game {
             return;
         }
 
-        // If a recipe exists, process it
+        // Find the corresponding crafting recipe
         Recipes.findRecipe(item1Opt.get(), item2Opt.get()).ifPresentOrElse(
                 recipe -> {
-                    // Remove items from inventory
+                    // Remove items from player inventory
                     player.inventory.removeItem(item1Opt.get().getName());
                     player.inventory.removeItem(item2Opt.get().getName());
 
@@ -301,16 +301,13 @@ public class Game {
 
         String mobName = command.secondWord();
 
-        // Get all mobs at current location and attack the specified mob
-        player.getLocation().getMobs().stream()
+        player.getLocation().getMobs().stream()     // make sure mob exists at current location
                 .filter(mob -> mob.getName().equals(mobName))
                 .findFirst()
                 .ifPresentOrElse(
                         mob -> {
-                            // If mob exists in current room, kill it
-                            String result = player.kill(mob);
-                            // Remove mob from game
-                            mobs.remove(mob);
+                            String result = player.kill(mob);   // mob exists in the room, kill it
+                            mobs.remove(mob);   // remove mob from game
                             System.out.println(result);
                         },
                         () -> System.out.println("There is no such mob here.")
@@ -318,26 +315,23 @@ public class Game {
     }
 
     /**
-     * Teleport player to random room.
+     * Teleport player to random room - intended for the Nether room.
      */
     private void teleportToRandomRoom() {
         Room currentRoom = player.getLocation();
         Room[] availableRooms = Arrays.stream(Room.values())
-                .filter(room -> !room.equals(currentRoom)) // Exclude the current room
+                .filter(room -> !room.equals(currentRoom)) // don't teleport to the same room
                 .toArray(Room[]::new);
 
         if (availableRooms.length == 0) {
-            // This really isn't possible since this is made for the Nether room, which does
-            // have exits, but we'll just keep it here
             System.out.println("No other rooms to teleport to!");
             return;
         }
 
-        // Select a random room from the filtered array
+        // Select a random room
         Random random = new Random();
         Room randomRoom = availableRooms[random.nextInt(availableRooms.length)];
 
-        // Teleport the player to the random room
         player.setLocation(randomRoom);
 
         System.out.println("* Teleporting to " + randomRoom.name() + " *");
