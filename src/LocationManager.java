@@ -61,7 +61,6 @@ public class LocationManager {
 
         // Run the room's on enter callback, if any
         Runnable onEnter = nextRoom.getOnEnterHandler();
-        System.out.println(onEnter);
         if (onEnter != null) {
             onEnter.run();
         }
