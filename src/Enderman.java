@@ -4,20 +4,21 @@ import java.util.Random;
 import java.util.Set;
 
 public class Enderman extends Mob {
-
     public Enderman() {
-        // Call the Mob constructor with the action as a lambda
         super("enderman", List.of(Item.ENDER_PEARL));
         addAction(this::teleport);
     }
 
+    /**
+     * Teleport the Enderman to a random exit in the current room.
+     */
     private void teleport() {
         Random random = new Random();
         Room currentRoom = getLocation();
         Set<Direction> exits = currentRoom.getExits();
 
+        // Enderman has nowhere to go, do nothing
         if (exits.isEmpty()) {
-            System.out.println("* The Enderman has nowhere to go *");
             return;
         }
 

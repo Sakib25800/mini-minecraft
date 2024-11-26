@@ -49,7 +49,7 @@ blaze powder, find a stronghold, and activate the portal frame.
 
 ### Nether
 
-- Items: Blaze Rod (4kg)
+- Items: None
 - Description: A dangerous dimension with essential materials
 
 ### Stronghold
@@ -71,7 +71,7 @@ blaze powder, find a stronghold, and activate the portal frame.
 
 ### Weight System
 
-- Maximum carrying capacity: 10kg
+- Maximum carrying capacity: 5kg
 - Steve must manage inventory weight strategically
 
 ### Win
@@ -79,10 +79,10 @@ blaze powder, find a stronghold, and activate the portal frame.
 To win, the player must:
 
 1. Collect Blaze Powder from the Village
-2. Collect Iron Sword from Stronhold
+2. Collect Iron Sword from Stronghold
 3. Kill Enderman for Ender Pearl
 4. Combine these to create an Eye of Ender (Blaze Powder + Ender Pearl)
-   5Take it to the Portal Room to activate the portal
+5. Take it to the Portal Room to activate the portal
 
 ### Commands
 

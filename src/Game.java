@@ -40,7 +40,7 @@ public class Game {
     private boolean processCommand(Command command) {
         boolean wantToQuit = false;
 
-        CommandWord commandWord = command.getCommandWord();
+        CommandWord commandWord = command.commandWord();
 
         switch (commandWord) {
             case UNKNOWN:
@@ -104,7 +104,7 @@ public class Game {
             return;
         }
 
-        String direction = command.getSecondWord();
+        String direction = command.secondWord();
 
         // Output current room
         Direction.fromString(direction)
@@ -135,8 +135,10 @@ public class Game {
             return;
         }
 
-        String itemName = command.getSecondWord();
-        player.pickup(itemName);
+        String itemName = command.secondWord();
+        String result = player.pickup(itemName);
+
+        System.out.println(result);
     }
 
     private void dropItem(Command command) {
@@ -145,8 +147,10 @@ public class Game {
             return;
         }
 
-        String itemName = command.getSecondWord();
-        player.drop(itemName);
+        String itemName = command.secondWord();
+        String result = player.drop(itemName);
+
+        System.out.println(result);
     }
 
     private void craftItem(Command command) {
@@ -155,8 +159,8 @@ public class Game {
             return;
         }
 
-        String firstItem = command.getSecondWord();
-        String secondItem = command.getThirdWord();
+        String firstItem = command.secondWord();
+        String secondItem = command.thirdWord();
 
         // Get the items from the inventory
         Optional<Item> item1Opt = player.inventory.getItem(firstItem);
@@ -199,13 +203,16 @@ public class Game {
             return;
         }
 
-        String mobName = command.getSecondWord();
+        String mobName = command.secondWord();
 
         player.getLocation().getMobs().stream()
                 .filter(mob -> mob.getName().equals(mobName))
                 .findFirst()
                 .ifPresentOrElse(
-                        player::kill,
+                        mob -> {
+                            String result = player.kill(mob);
+                            System.out.println(result);
+                        },
                         () -> System.out.println("There is no such mob here.")
                 );
     }

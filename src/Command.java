@@ -1,8 +1,4 @@
-public class Command {
-    private final CommandWord commandWord;
-    private final String secondWord;
-    private final String thirdWord;
-
+public record Command(CommandWord commandWord, String secondWord, String thirdWord) {
     /**
      * Create a command object. First and second words must be supplied, but
      * the second may be null.
@@ -11,10 +7,7 @@ public class Command {
      *                    was not recognised.
      * @param secondWord  The second word of the command. May be null.
      */
-    public Command(CommandWord commandWord, String secondWord, String thirdWord) {
-        this.commandWord = commandWord;
-        this.secondWord = secondWord;
-        this.thirdWord = thirdWord;
+    public Command {
     }
 
     /**
@@ -22,7 +15,8 @@ public class Command {
      *
      * @return The command word.
      */
-    public CommandWord getCommandWord() {
+    @Override
+    public CommandWord commandWord() {
         return commandWord;
     }
 
@@ -30,7 +24,8 @@ public class Command {
      * @return The second word of this command. Returns null if there was no
      * second word.
      */
-    public String getSecondWord() {
+    @Override
+    public String secondWord() {
         return secondWord;
     }
 
@@ -38,7 +33,8 @@ public class Command {
      * @return The third word of this command. Returns null if there was no
      * second word.
      */
-    public String getThirdWord() {
+    @Override
+    public String thirdWord() {
         return thirdWord;
     }
 

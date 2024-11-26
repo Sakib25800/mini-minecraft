@@ -16,8 +16,7 @@ public class Parser {
      * @return The next command from the user.
      */
     public Command getCommand() {
-        // Prompt
-        System.out.print("> ");
+        System.out.print("> "); // Prompt
 
         String inputLine = reader.nextLine();
 

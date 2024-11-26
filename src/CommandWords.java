@@ -23,17 +23,8 @@ public class CommandWords {
      */
     public CommandWord getCommandWord(String commandWord) {
         CommandWord command = validCommands.get(commandWord);
-        
-        return Objects.requireNonNullElse(command, CommandWord.UNKNOWN);
-    }
 
-    /**
-     * Check whether a given String is a valid command word.
-     *
-     * @return true if it is, false if it isn't.
-     */
-    public boolean isCommand(String aString) {
-        return validCommands.containsKey(aString);
+        return Objects.requireNonNullElse(command, CommandWord.UNKNOWN);
     }
 
     /**

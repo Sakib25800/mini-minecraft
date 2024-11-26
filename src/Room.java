@@ -58,10 +58,6 @@ public enum Room {
         exits.put(direction, neighbor);
     }
 
-    public String getShortDescription() {
-        return description;
-    }
-
     public Set<Direction> getExits() {
         return exits.keySet();
     }
@@ -75,10 +71,6 @@ public enum Room {
         }
 
         return returnString.toString();
-    }
-
-    public Optional<Room> getExit(Direction direction) {
-        return Optional.ofNullable(exits.get(direction));
     }
 
     public List<Mob> getMobs() {
