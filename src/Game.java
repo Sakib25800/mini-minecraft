@@ -1,80 +1,42 @@
+import java.util.Optional;
+
 public class Game {
+    private static final String PLAYER_NAME = "Steve";
+    private static final int INVENTORY_CAPACITY = 5;
+    private static final Room SPAWN_ROOM = Room.PLAINS;
+
     private final Parser parser;
-    private Room currentRoom;
+    private final Player player;
 
-    /**
-     * Create the game and initialise its internal map.
-     */
     public Game() {
-        createRooms();
         parser = new Parser();
+        player = new Player(PLAYER_NAME, INVENTORY_CAPACITY);
+
+        LocationManager.INSTANCE.spawn(player, Room.PLAINS);
     }
 
-    /**
-     * Create all the rooms and link their exits together.
-     */
-    private void createRooms() {
-        Room outside, theater, pub, lab, office;
-
-        // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
-
-        // initialise room exits
-        outside.setExit("east", theater);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
-
-        theater.setExit("west", outside);
-
-        pub.setExit("east", outside);
-
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
-
-        office.setExit("west", lab);
-
-        currentRoom = outside;  // start game outside
-    }
-
-    /**
-     * Main play routine.  Loops until end of play.
-     */
     public void play() {
         printWelcome();
-
-        // Enter the main command loop.  Here we repeatedly read commands and
-        // execute them until the game is over.
 
         boolean finished = false;
         while (!finished) {
             Command command = parser.getCommand();
             finished = processCommand(command);
         }
-        System.out.println("Thank you for playing.  Good bye.");
+
+        System.out.println("Thank you for playing. Good bye.");
     }
 
-    /**
-     * Print out the opening message for the player.
-     */
     private void printWelcome() {
         System.out.println();
-        System.out.println("Welcome to the World of Zuul!");
-        System.out.println("World of Zuul is a new, incredibly boring adventure game.");
+        System.out.println("Welcome to Mini Minecraft!");
+        System.out.println("You are " + player.getName());
+        System.out.println("Find items and craft an Eye of Ender to win.");
         System.out.println("Type '" + CommandWord.HELP + "' if you need help.");
         System.out.println();
-        System.out.println(currentRoom.getLongDescription());
+        System.out.println(player.getLocation());
     }
 
-    /**
-     * Given a command, process (that is: execute) the command.
-     *
-     * @param command The command to be processed.
-     * @return true If the command ends the game, false otherwise.
-     */
     private boolean processCommand(Command command) {
         boolean wantToQuit = false;
 
@@ -90,67 +52,176 @@ public class Game {
                 break;
 
             case GO:
-                goRoom(command);
+                gotoRoom(command);
+                break;
+
+            case BACK:
+                goBack();
+                break;
+
+            case INVENTORY:
+                showInventory();
+                break;
+
+            case PICKUP:
+                pickupItem(command);
+                break;
+
+            case DROP:
+                dropItem(command);
+                break;
+
+            case CRAFT:
+                craftItem(command);
+                break;
+
+            case ATTACK:
+                attack(command);
                 break;
 
             case QUIT:
                 wantToQuit = quit(command);
                 break;
         }
+
         return wantToQuit;
     }
 
-    // implementations of user commands:
-
-    /**
-     * Print out some help information.
-     * Here we print some stupid, cryptic message and a list of the
-     * command words.
-     */
     private void printHelp() {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("You need to collect Blaze Powder and craft an Eye of Ender.");
+        System.out.println("Travel between rooms to find what you need.");
+        System.out.println("Blaze Powder is in the Village and you must kill the Enderman for the Eye of Ender.");
+        System.out.println();
+        System.out.println("Current room: " + player.getLocation());
         System.out.println();
         System.out.println("Your command words are:");
         parser.showCommands();
     }
 
-    /**
-     * Try to go in one direction. If there is an exit, enter the new
-     * room, otherwise print an error message.
-     */
-    private void goRoom(Command command) {
+    private void gotoRoom(Command command) {
         if (!command.hasSecondWord()) {
-            // if there is no second word, we don't know where to go...
             System.out.println("Go where?");
             return;
         }
 
         String direction = command.getSecondWord();
 
-        // Try to leave current room.
-        Room nextRoom = currentRoom.getExit(direction);
-
-        if (nextRoom == null) {
-            System.out.println("There is no door!");
-        } else {
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
-        }
+        // Output current room
+        Direction.fromString(direction)
+                .flatMap(player::move)
+                .ifPresentOrElse(
+                        System.out::println,
+                        () -> {
+                            Room currentRoom = player.getLocation();
+                            System.out.println("I don't know that direction.\n" + currentRoom.getExitString());
+                        }
+                );
     }
 
-    /**
-     * "Quit" was entered. Check the rest of the command to see
-     * whether we really quit the game.
-     *
-     * @return true, if this command quits the game, false otherwise.
-     */
+    private void goBack() {
+        player.goBack().ifPresentOrElse(
+                System.out::println,
+                () -> System.out.println("Can't go back.")
+        );
+    }
+
+    private void showInventory() {
+        System.out.println(player.inventory);
+    }
+
+    private void pickupItem(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Pick what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        player.pickup(itemName);
+    }
+
+    private void dropItem(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Drop what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        player.drop(itemName);
+    }
+
+    private void craftItem(Command command) {
+        if (!command.hasSecondWord() || !command.hasThirdWord()) {
+            System.out.println("Craft what with what?");
+            return;
+        }
+
+        String firstItem = command.getSecondWord();
+        String secondItem = command.getThirdWord();
+
+        // Get the items from the inventory
+        Optional<Item> item1Opt = player.inventory.getItem(firstItem);
+        Optional<Item> item2Opt = player.inventory.getItem(secondItem);
+
+        // If either item is missing, print a message and return
+        if (item1Opt.isEmpty() || item2Opt.isEmpty()) {
+            System.out.println("You don't have those items!");
+            return;
+        }
+
+        // If a recipe exists, process it, otherwise show a message
+        Recipes.findRecipe(item1Opt.get(), item2Opt.get()).ifPresentOrElse(
+                recipe -> {
+                    player.inventory.removeItem(item1Opt.get().getName());
+                    player.inventory.removeItem(item2Opt.get().getName());
+
+                    Item craftedItem = recipe.result();
+                    player.inventory.addItem(craftedItem);
+
+                    System.out.println("Crafted: " + craftedItem.getName());
+                    checkWinCondition();
+                },
+                () -> System.out.println("Can't craft with those items!")
+        );
+    }
+
     private boolean quit(Command command) {
         if (command.hasSecondWord()) {
             System.out.println("Quit what?");
             return false;
-        } else {
-            return true;  // signal that we want to quit
         }
+
+        return true;
+    }
+
+    private void attack(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Attack what?");
+            return;
+        }
+
+        String mobName = command.getSecondWord();
+
+        player.getLocation().getMobs().stream()
+                .filter(mob -> mob.getName().equals(mobName))
+                .findFirst()
+                .ifPresentOrElse(
+                        player::kill,
+                        () -> System.out.println("There is no such mob here.")
+                );
+    }
+
+    private void checkWinCondition() {
+        Optional<Item> eyeOfEnder = player.inventory.getItem(Item.EYE_OF_ENDER.getName());
+
+        eyeOfEnder.ifPresentOrElse((eye) -> {
+            // If the player is in the Portal Room, they win
+            if (player.getLocation() == Room.PORTAL_ROOM) {
+                System.out.println("You've activated the End Portal! You win!");
+                System.exit(0);
+            } else {
+                // If the player is not in the Portal Room, they need to go there
+                System.out.println("You have the Eye of Ender. Head to the Portal Room to win!");
+            }
+        }, () -> System.out.println("You don't have the Eye of Ender. Craft it and head to the Portal Room to win."));
     }
 }

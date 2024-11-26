@@ -1,50 +1,57 @@
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Inventory {
     private final Map<String, Item> items;
-    private final int maxWeight;
+    private final int capacity;
 
-    public Inventory(List<Item> initialItems, int maxWeight) {
-        this.maxWeight = maxWeight;
+    public Inventory(int capacity, List<Item> initialItems) {
+        this.capacity = capacity;
         this.items = new HashMap<>();
-
-        this.addItems(initialItems);
+        this.addItems(Objects.requireNonNullElse(initialItems, List.of()));
     }
 
-    public Item removeItem(String itemName) {
-        return items.remove(itemName);
+    public Inventory(int capacity) {
+        this(capacity, new ArrayList<>());
     }
 
-    public Item addItem(Item item) {
+    public void removeItem(String itemName) {
+        items.remove(itemName);
+    }
+
+    public void removeItem(Item item) {
+        items.remove(item.getName());
+    }
+
+    public Optional<Item> addItem(Item item) {
         // Check if additional item would exceed max weight
         double newWeight = getCurrentInventoryWeight() + item.getWeight();
-        if (newWeight > maxWeight) {
-            return null;
+        if (newWeight > capacity) {
+            return Optional.empty();
         }
 
         // If not, add to inventory
-        return items.put(item.getName(), item);
+        items.put(item.getName(), item);
+        return Optional.of(item);
     }
 
-    public Map<String, Item> addItems(List<Item> itemsToAdd) {
+    public Optional<Map<String, Item>> addItems(List<Item> itemsToAdd) {
         double newTotalWeight = getCurrentInventoryWeight() +
                 itemsToAdd.stream().mapToDouble(Item::getWeight).sum();
 
         // Check if additional weight exceeds max weight
-        if (newTotalWeight > maxWeight) {
-            return null;
+        if (newTotalWeight > capacity) {
+            return Optional.empty();
         }
 
         // Otherwise, add all items to inventory
         itemsToAdd.forEach(this::addItem);
 
-        return items;
+        return Optional.of(items);
     }
 
-    public Item getItem(String itemName) {
-        return items.get(itemName);
+    public Optional<Item> getItem(String itemName) {
+        return Optional.ofNullable(items.get(itemName));
     }
 
     public List<Item> getAllItems() {
@@ -63,7 +70,9 @@ public class Inventory {
 
     @Override
     public String toString() {
-        String itemsList = String.join(", ", this.items.keySet());
-        return "Inventory(" + items.size() + "kg): " + itemsList + (itemsList.isEmpty() ? "" : ",");
+        String itemsList = this.items.entrySet().stream()
+                .map(entry -> entry.getKey() + " (" + entry.getValue().getWeight() + "kg)")
+                .collect(Collectors.joining(", "));
+        return "Inventory(" + getCurrentInventoryWeight() + "kg): " + (itemsList.isEmpty() ? "Empty" : itemsList);
     }
 }

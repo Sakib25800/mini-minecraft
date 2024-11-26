@@ -44,7 +44,8 @@ blaze powder, find a stronghold, and activate the portal frame.
 ### Forest
 
 - Items: Ender Pearl (3kg)
-- Description: Dark forest where Enderman occasionally drop pearls
+- Description: Dark forest where Enderman build
+- Mobs: Enderman
 
 ### Nether
 
@@ -77,11 +78,11 @@ blaze powder, find a stronghold, and activate the portal frame.
 
 To win, the player must:
 
-1. Get a Blaze Rod from the Nether
-2. Collect Blaze Powder from the Village
-3. Kill Enderman for Ender Pearl in the Forest
+1. Collect Blaze Powder from the Village
+2. Collect Iron Sword from Stronhold
+3. Kill Enderman for Ender Pearl
 4. Combine these to create an Eye of Ender (Blaze Powder + Ender Pearl)
-5. Take it to the Portal Room to activate the portal
+   5Take it to the Portal Room to activate the portal
 
 ### Commands
 
