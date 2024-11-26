@@ -4,7 +4,6 @@ public class LocationManager {
     public static final LocationManager INSTANCE = new LocationManager();
 
     private final Map<Entity, List<Room>> locationHistory = new HashMap<>();
-    private final Set<Entity> currentlyProcessing = new HashSet<>();
 
     private LocationManager() {
     }
@@ -32,6 +31,16 @@ public class LocationManager {
     }
 
     /**
+     * Sets the current room of the entity.
+     *
+     * @param entity The entity whose location is requested.
+     */
+    public void setLocation(Entity entity, Room destination) {
+        // Move the entity by adding the next room to the location history list
+        locationHistory.get(entity).add(destination);
+    }
+
+    /**
      * Gets a list of all entities in the specified room.
      *
      * @param room The room to check.
@@ -55,18 +64,14 @@ public class LocationManager {
         Room currentRoom = getLocation(entity);
         Room nextRoom = currentRoom.exits.get(direction);
 
+        // There is no room in that direction
         if (nextRoom == null) {
             return Optional.empty();
         }
 
-        // Run the room's on enter callback, if any
-        Runnable onEnter = nextRoom.getOnEnterHandler();
-        if (onEnter != null) {
-            onEnter.run();
-        }
+        // Change location
+        setLocation(entity, nextRoom);
 
-        // Move the entity by adding the next room to the location history list
-        locationHistory.get(entity).add(nextRoom);
         return Optional.of(nextRoom);
     }
 
@@ -82,10 +87,9 @@ public class LocationManager {
             return Optional.empty();
         }
 
-        // Remove the current room
-        history.removeLast();
-        // and return the previous one
-        return Optional.of(history.getLast());
+        Room previousRoom = history.get(history.size() - 2);
+        setLocation(entity, previousRoom);
+        return Optional.of(previousRoom);
     }
 
     /**

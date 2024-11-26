@@ -38,6 +38,15 @@ public enum Direction {
         return Optional.ofNullable(LABEL_MAP.get(label.toLowerCase()));
     }
 
+    public Direction getOpposite() {
+        return switch (this) {
+            case NORTH -> SOUTH;
+            case SOUTH -> NORTH;
+            case EAST -> WEST;
+            case WEST -> EAST;
+        };
+    }
+
     @Override
     public String toString() {
         return label;

@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Mini Minecraft.
@@ -23,16 +21,8 @@ public class Game {
         this.player = new Player(PLAYER_NAME, INVENTORY_CAPACITY);
         this.mobs = new ArrayList<>();
 
-        // Initialise inventory
         initRoomItems();
-
-        // Initialise mobs
         initMobs();
-
-        // Portal room is required to win, so every time a user enters it
-        // we check for the W
-        Room.PORTAL_ROOM.setOnEnterHandler(this::checkWinCondition);
-
         // Spawn player
         LocationManager.INSTANCE.spawn(player, SPAWN_ROOM);
     }
@@ -68,7 +58,8 @@ public class Game {
             Command command = parser.getCommand();
             // Simulate autonomous mobs by triggering mobs every command
             // - essentially a Minecraft tick
-            triggerMobActions();
+            mobs.forEach(Mob::performAction);
+
             finished = processCommand(command);
         }
 
@@ -144,10 +135,6 @@ public class Game {
         return wantToQuit;
     }
 
-    private void triggerMobActions() {
-        mobs.forEach(Mob::performAction);
-    }
-
     /**
      * Displays the help message, giving the player instructions on how to play the game.
      */
@@ -175,7 +162,18 @@ public class Game {
         Direction.fromString(direction)
                 .flatMap(player::move)
                 .ifPresentOrElse(
-                        System.out::println,    // Inform user of new room
+                        (destination) -> {
+                            System.out.println(destination);
+
+                            switch (destination) {
+                                case Room.NETHER -> {
+                                    this.teleportToRandomRoom();
+                                }
+                                case Room.END_PORTAL_ROOM -> {
+                                    this.checkWinCondition();
+                                }
+                            }
+                        },
                         () -> {
                             // Player is being dumb, show them the possible exits
                             System.out.println("I don't know that direction.\n" + player.getLocation().getExitString());
@@ -320,6 +318,33 @@ public class Game {
     }
 
     /**
+     * Teleport player to random room.
+     */
+    private void teleportToRandomRoom() {
+        Room currentRoom = player.getLocation();
+        Room[] availableRooms = Arrays.stream(Room.values())
+                .filter(room -> !room.equals(currentRoom)) // Exclude the current room
+                .toArray(Room[]::new);
+
+        if (availableRooms.length == 0) {
+            // This really isn't possible since this is made for the Nether room, which does
+            // have exits, but we'll just keep it here
+            System.out.println("No other rooms to teleport to!");
+            return;
+        }
+
+        // Select a random room from the filtered array
+        Random random = new Random();
+        Room randomRoom = availableRooms[random.nextInt(availableRooms.length)];
+
+        // Teleport the player to the random room
+        player.setLocation(randomRoom);
+
+        System.out.println("* Teleporting to " + randomRoom.name() + " *");
+        System.out.println(randomRoom);
+    }
+
+    /**
      * Checks if the player has crafted the Eye of Ender and whether they are in the Portal Room.
      * If both conditions are met, the player gets the W.
      */
@@ -328,13 +353,8 @@ public class Game {
 
         // Check if the player has the Eye of Ender
         eyeOfEnder.ifPresentOrElse((eye) -> {
-            // Check if the player is in the Portal Room
-            if (player.getLocation() == Room.PORTAL_ROOM) {
-                System.out.println("You've activated the End Portal! You win!");
-                System.exit(0);
-            } else {
-                System.out.println("You have the Eye of Ender. Head to the Portal Room to win!");
-            }
+            System.out.println("You've activated the End Portal! You win!");
+            System.exit(0);
         }, () -> System.out.println("You don't have the Eye of Ender. Craft it and head to the Portal Room to win."));
     }
 }

@@ -1,11 +1,15 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public abstract class Entity {
+    protected static final Random RANDOM = new Random();
+
     private final String name;
     public Inventory inventory;
+
 
     /**
      * Creates a new Entity in Mini Minecraft.
@@ -26,6 +30,13 @@ public abstract class Entity {
      */
     public Room getLocation() {
         return LocationManager.INSTANCE.getLocation(this);
+    }
+
+    /**
+     * Sets the current room the entity is in.
+     */
+    public void setLocation(Room to) {
+        LocationManager.INSTANCE.setLocation(this, to);
     }
 
     /**
