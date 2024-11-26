@@ -21,6 +21,10 @@ public class Game {
 
         // Spawn the player
         LocationManager.INSTANCE.spawn(player, SPAWN_ROOM);
+
+        // Portal room is required to win, so every time a user enters we
+        // check for the W
+        Room.PORTAL_ROOM.setOnEnterHandler(this::checkWinCondition);
     }
 
     /**
@@ -33,8 +37,6 @@ public class Game {
         boolean finished = false;
         while (!finished) {
             Command command = parser.getCommand();
-            // Check if the user has the W every action
-            checkWinCondition();
             finished = processCommand(command);
         }
 
@@ -271,7 +273,7 @@ public class Game {
                 .findFirst()
                 .ifPresentOrElse(
                         mob -> {
-                            // If exits, kill mob
+                            // If mob exists in current room, kill it
                             String result = player.kill(mob);
                             System.out.println(result);
                         },

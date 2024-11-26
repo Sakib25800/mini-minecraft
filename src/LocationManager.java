@@ -39,7 +39,7 @@ public class LocationManager {
      */
     public List<Entity> getEntitiesInRoom(Room room) {
         return locationHistory.entrySet().stream()
-                .filter(entry -> entry.getValue().get(entry.getValue().size() - 1) == room)
+                .filter(entry -> entry.getValue().getLast() == room)
                 .map(Map.Entry::getKey)
                 .toList();
     }
@@ -64,6 +64,12 @@ public class LocationManager {
                 .filter(e -> e instanceof Mob)
                 .map(e -> (Mob) e)
                 .forEach(this::triggerMobAction);
+
+        // Run the room's on enter callback, if any
+        Runnable onEnter = currentRoom.getOnEnterHandler();
+        if (onEnter != null) {
+            onEnter.run();
+        }
 
         // Move the entity by adding the next room to the location history list
         locationHistory.get(entity).add(nextRoom);

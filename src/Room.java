@@ -15,7 +15,7 @@ public enum Room {
     STRONGHOLD("an ancient structure housing the End Portal"),
     PORTAL_ROOM("an end portal room");
 
-    // Very large number as no need for a room to have a max capacity
+    // Large number as no need for a room to have a max capacity
     private static final int MAX_INVENTORY_CAPACITY = Integer.MAX_VALUE;
 
     static {
@@ -48,11 +48,21 @@ public enum Room {
     public final Inventory inventory;
     final HashMap<Direction, Room> exits;
     private final String description;
+    private Runnable onEnterHandler;
 
     Room(String description) {
         this.description = description;
         this.exits = new HashMap<>();
         this.inventory = new Inventory(MAX_INVENTORY_CAPACITY, new ArrayList<>());
+        this.onEnterHandler = null;
+    }
+
+    public Runnable getOnEnterHandler() {
+        return onEnterHandler;
+    }
+
+    public void setOnEnterHandler(Runnable onEnter) {
+        this.onEnterHandler = onEnter;
     }
 
     /**
