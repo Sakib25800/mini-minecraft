@@ -1,50 +1,13 @@
+/**
+ * Represents a command entered by the player in the game.
+ * A command consists of a command word (e.g., "go", "pickup item1") and optional
+ * second and third words.
+ *
+ * @param commandWord The primary command word (e.g., "go", "pickup").
+ * @param secondWord  The optional second word that adds context to the command (e.g., "north", "diamond").
+ * @param thirdWord   The optional third word for further context (e.g., "item2").
+ */
 public record Command(CommandWord commandWord, String secondWord, String thirdWord) {
-    /**
-     * Create a command object. First and second words must be supplied, but
-     * the second may be null.
-     *
-     * @param commandWord The CommandWord. UNKNOWN if the command word
-     *                    was not recognised.
-     * @param secondWord  The second word of the command. May be null.
-     */
-    public Command {
-    }
-
-    /**
-     * Return the command word (the first word) of this command.
-     *
-     * @return The command word.
-     */
-    @Override
-    public CommandWord commandWord() {
-        return commandWord;
-    }
-
-    /**
-     * @return The second word of this command. Returns null if there was no
-     * second word.
-     */
-    @Override
-    public String secondWord() {
-        return secondWord;
-    }
-
-    /**
-     * @return The third word of this command. Returns null if there was no
-     * second word.
-     */
-    @Override
-    public String thirdWord() {
-        return thirdWord;
-    }
-
-    /**
-     * @return true if this command was not understood.
-     */
-    public boolean isUnknown() {
-        return (commandWord == CommandWord.UNKNOWN);
-    }
-
     /**
      * @return true if the command has a second word.
      */
@@ -56,7 +19,6 @@ public record Command(CommandWord commandWord, String secondWord, String thirdWo
      * @return true if the command has a third word.
      */
     public boolean hasThirdWord() {
-        return (secondWord != null);
+        return (thirdWord != null);
     }
 }
-
