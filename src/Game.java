@@ -20,7 +20,7 @@ public class Game {
         this.parser = new Parser();
         this.player = new Player(PLAYER_NAME, INVENTORY_CAPACITY);
         this.mobs = new ArrayList<>();
-
+        
         initRoomItems();
         initMobs();
         // Spawn player
@@ -35,7 +35,7 @@ public class Game {
 
         mobs.add(enderman);
 
-        LocationManager.INSTANCE.spawn(enderman, Room.PLAINS);
+        LocationManager.INSTANCE.spawn(enderman, Room.FOREST);
     }
 
     /**
@@ -43,6 +43,7 @@ public class Game {
      */
     private void initRoomItems() {
         Room.VILLAGE.items.addItem(Item.BLAZE_POWDER);
+        Room.PLAINS.items.addItem(Item.BLAZE_ROD);
         Room.STRONGHOLD.items.addItem(Item.IRON_SWORD);
     }
 
@@ -168,6 +169,9 @@ public class Game {
                             switch (destination) {
                                 case Room.NETHER -> {
                                     this.teleportToRandomRoom();
+                                    // Check for win condition again as user could end up
+                                    // in End Portal room
+                                    this.checkWinCondition();
                                 }
                                 case Room.END_PORTAL_ROOM -> {
                                     this.checkWinCondition();
@@ -344,6 +348,9 @@ public class Game {
      */
     private void checkWinCondition() {
         Optional<Item> eyeOfEnder = player.inventory.getItem(Item.EYE_OF_ENDER.getName());
+
+        // End Portal room required to win
+        if (player.getLocation() != Room.END_PORTAL_ROOM) return;
 
         // Check if the player has the Eye of Ender
         eyeOfEnder.ifPresentOrElse((eye) -> {

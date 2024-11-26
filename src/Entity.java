@@ -65,16 +65,26 @@ public abstract class Entity {
      * @return a message indicating the result of the pickup action
      */
     public String pickup(String itemName) {
-        Optional<Item> item = getLocation().inventory.getAllItems().stream()
+        Optional<Item> item = getLocation().items.getAllItems().stream()
                 .filter(i -> i.getName().equals(itemName))
                 .findFirst();
 
-        return item.map(value -> this.inventory.addItem(value)
-                .map(newItem -> {
-                    getLocation().inventory.removeItem(value);
-                    return value.getName() + " picked up.";
+        // If the item is found
+        return item.map(value -> {
+                    // Player cannot pick up
+                    if (!value.isPickable()) {
+                        return itemName + " is not pickable.";
+                    }
+
+                    // Try to add the item to the inventory
+                    return this.inventory.addItem(value)
+                            .map(newItem -> {
+                                getLocation().items.removeItem(value);
+                                return value.getName() + " picked up.";
+                            })
+                            .orElse("Inventory full.");
                 })
-                .orElse("Inventory full.")).orElseGet(() -> itemName + " is not in the room.");
+                .orElseGet(() -> itemName + " is not in the room.");
     }
 
     /**
@@ -88,13 +98,16 @@ public abstract class Entity {
                 .filter(i -> i.getName().equals(itemName))
                 .findFirst();
 
-        if (item.isPresent()) {
-            this.inventory.removeItem(item.get());
-            getLocation().inventory.addItem(item.get());
-            return item.get().getName() + " dropped.";
-        } else {
+        if (item.isEmpty()) {
             return name + " doesn't have the item: " + itemName;
         }
+
+        // Remove item from inventory
+        this.inventory.removeItem(item.get());
+        // and add item to current room
+        getLocation().items.addItem(item.get());
+
+        return item.get().getName() + " dropped.";
     }
 
     /**
@@ -103,10 +116,10 @@ public abstract class Entity {
      * @return a message indicating the result of the death action and any dropped items
      */
     public String die() {
-        Inventory roomInventory = getLocation().inventory;
+        Inventory roomItems = getLocation().items;
         List<Item> droppedItems = inventory.getAllItems(); // Store dropped items for result
 
-        roomInventory.addItems(droppedItems); // Add dropped items to the room
+        roomItems.addItems(droppedItems); // Add dropped items to the room
         inventory.clear(); // Clear the entity's inventory
         LocationManager.INSTANCE.removeEntity(this); // Remove the entity
 

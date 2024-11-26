@@ -62,6 +62,7 @@ public class Inventory {
 
         // If not, add to inventory
         items.put(item.getName(), item);
+
         return Optional.of(item);
     }
 
