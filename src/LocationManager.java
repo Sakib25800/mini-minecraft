@@ -59,14 +59,9 @@ public class LocationManager {
             return Optional.empty();
         }
 
-        // Before moving, trigger actions of mobs in the current room
-        getEntitiesInRoom(currentRoom).stream()
-                .filter(e -> e instanceof Mob)
-                .map(e -> (Mob) e)
-                .forEach(this::triggerMobAction);
-
         // Run the room's on enter callback, if any
-        Runnable onEnter = currentRoom.getOnEnterHandler();
+        Runnable onEnter = nextRoom.getOnEnterHandler();
+        System.out.println(onEnter);
         if (onEnter != null) {
             onEnter.run();
         }
@@ -92,26 +87,6 @@ public class LocationManager {
         history.removeLast();
         // and return the previous one
         return Optional.of(history.getLast());
-    }
-
-    /**
-     * Triggers the action of a Mob without causing recursion by preventing the mob from triggering its own action
-     * while it is ongoing e.g. Enderman teleporting to other rooms.
-     *
-     * @param mob The mob whose action should be triggered.
-     */
-    private void triggerMobAction(Mob mob) {
-        // Action already in process, don't run again
-        if (currentlyProcessing.contains(mob)) {
-            return;
-        }
-
-        try {
-            currentlyProcessing.add(mob);
-            mob.performAction();
-        } finally {
-            currentlyProcessing.remove(mob);
-        }
     }
 
     /**

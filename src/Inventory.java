@@ -124,9 +124,16 @@ public class Inventory {
 
     @Override
     public String toString() {
+        // Create the string for the items in the inventory
         String itemsList = this.items.entrySet().stream()
                 .map(entry -> entry.getKey() + " (" + entry.getValue().getWeight() + "kg)")
                 .collect(Collectors.joining(", "));
-        return "Inventory(" + getCurrentInventoryWeight() + "kg): " + (itemsList.isEmpty() ? "Empty" : itemsList);
+
+        // Get current inventory weight and max capacity
+        double currentWeight = getCurrentInventoryWeight();
+
+        // Return the formatted string with the current weight and max weight
+        return "Inventory (" + currentWeight + "/" + capacity + "kg): "
+                + (itemsList.isEmpty() ? "Empty" : itemsList);
     }
 }

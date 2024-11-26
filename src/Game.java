@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -10,21 +12,48 @@ public class Game {
 
     private final Parser parser;
     private final Player player;
+    private final List<Mob> mobs;
 
     /**
      * Constructs a new Game instance and initializes the player and parser.
      * The player starts in the spawn room (Plains).
      */
     public Game() {
-        parser = new Parser();
-        player = new Player(PLAYER_NAME, INVENTORY_CAPACITY);
+        this.parser = new Parser();
+        this.player = new Player(PLAYER_NAME, INVENTORY_CAPACITY);
+        this.mobs = new ArrayList<>();
 
-        // Spawn the player
-        LocationManager.INSTANCE.spawn(player, SPAWN_ROOM);
+        // Initialise inventory
+        initRoomItems();
 
-        // Portal room is required to win, so every time a user enters we
-        // check for the W
+        // Initialise mobs
+        initMobs();
+
+        // Portal room is required to win, so every time a user enters it
+        // we check for the W
         Room.PORTAL_ROOM.setOnEnterHandler(this::checkWinCondition);
+
+        // Spawn player
+        LocationManager.INSTANCE.spawn(player, SPAWN_ROOM);
+    }
+
+    /**
+     * Initialises all mobs in the game and spawns them.
+     */
+    private void initMobs() {
+        Mob enderman = new Enderman();
+
+        mobs.add(enderman);
+
+        LocationManager.INSTANCE.spawn(enderman, Room.PLAINS);
+    }
+
+    /**
+     * Initialises all items in the game and places them.
+     */
+    private void initRoomItems() {
+        Room.VILLAGE.inventory.addItem(Item.BLAZE_POWDER);
+        Room.STRONGHOLD.inventory.addItem(Item.IRON_SWORD);
     }
 
     /**
@@ -37,6 +66,9 @@ public class Game {
         boolean finished = false;
         while (!finished) {
             Command command = parser.getCommand();
+            // Simulate autonomous mobs by triggering mobs every command
+            // - essentially a Minecraft tick
+            triggerMobActions();
             finished = processCommand(command);
         }
 
@@ -110,6 +142,10 @@ public class Game {
         }
 
         return wantToQuit;
+    }
+
+    private void triggerMobActions() {
+        mobs.forEach(Mob::performAction);
     }
 
     /**
@@ -275,6 +311,8 @@ public class Game {
                         mob -> {
                             // If mob exists in current room, kill it
                             String result = player.kill(mob);
+                            // Remove mob from game
+                            mobs.remove(mob);
                             System.out.println(result);
                         },
                         () -> System.out.println("There is no such mob here.")

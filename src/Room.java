@@ -36,13 +36,6 @@ public enum Room {
                 NETHER, Map.of(Direction.EAST, PLAINS),
                 PORTAL_ROOM, Map.of(Direction.NORTH, STRONGHOLD)
         ).forEach((room, exits) -> exits.forEach(room::setExit));
-
-        // Initialise inventory
-        Room.VILLAGE.inventory.addItem(Item.BLAZE_POWDER);
-        Room.STRONGHOLD.inventory.addItem(Item.IRON_SWORD);
-
-        // Initialise mobs
-        LocationManager.INSTANCE.spawn(new Enderman(), Room.PLAINS);
     }
 
     public final Inventory inventory;
@@ -96,7 +89,7 @@ public enum Room {
     }
 
     private String getRoomDescription() {
-        return "You are in " + description;
+        return name() + " - You are in " + description;
     }
 
     private String getItemsDescription() {
