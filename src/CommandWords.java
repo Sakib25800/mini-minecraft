@@ -15,7 +15,7 @@ public class CommandWords {
     }
 
     /**
-     * Find the CommandWord associated with a command word.
+     * Find the {@link CommandWord} associated with a command word.
      *
      * @param commandWord The word to look up.
      * @return The CommandWord corresponding to commandWord, or UNKNOWN

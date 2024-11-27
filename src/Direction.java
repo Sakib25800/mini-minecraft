@@ -24,11 +24,6 @@ public enum Direction {
 
     /**
      * Converts a string label to its corresponding {@link Direction} enum.
-     * <p>
-     * This method performs a case-insensitive comparison and returns an {@link Optional}
-     * of the matching {@link Direction} enum. If the provided label does not match
-     * any of the predefined direction labels, an empty {@link Optional} will be returned.
-     * </p>
      *
      * @param label the string label representing a direction (e.g., "north", "south")
      * @return an {@link Optional} containing the corresponding {@link Direction} if found,
@@ -36,15 +31,6 @@ public enum Direction {
      */
     public static Optional<Direction> fromString(String label) {
         return Optional.ofNullable(LABEL_MAP.get(label.toLowerCase()));
-    }
-
-    public Direction getOpposite() {
-        return switch (this) {
-            case NORTH -> SOUTH;
-            case SOUTH -> NORTH;
-            case EAST -> WEST;
-            case WEST -> EAST;
-        };
     }
 
     @Override

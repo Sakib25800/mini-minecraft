@@ -1,3 +1,7 @@
+/**
+ * Repository of all valid command words for Mini Minecraft
+ * along with a string in a particular language.
+ */
 public enum CommandWord {
     GO("go"),
     QUIT("quit"),
