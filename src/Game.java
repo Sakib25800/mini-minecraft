@@ -1,4 +1,6 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Mini Minecraft.
@@ -20,22 +22,23 @@ public class Game {
         this.parser = new Parser();
         this.player = new Player(PLAYER_NAME, INVENTORY_CAPACITY);
         this.mobs = new ArrayList<>();
-        
+
         initRoomItems();
         initMobs();
-        // Spawn player
-        LocationManager.INSTANCE.spawn(player, SPAWN_ROOM);
     }
 
     /**
      * Initialises all mobs in the game and spawns them.
      */
     private void initMobs() {
-        Mob enderman = new Enderman();
+        Enderman enderman = new Enderman();
+        Zombie zombie = new Zombie();
 
         mobs.add(enderman);
+        mobs.add(zombie);
 
         LocationManager.INSTANCE.spawn(enderman, Room.FOREST);
+        LocationManager.INSTANCE.spawn(zombie, Room.PLAINS);
     }
 
     /**
@@ -52,14 +55,20 @@ public class Game {
      * The loop continues until the player quits.
      */
     public void play() {
+        // Spawn player, begin game
+        LocationManager.INSTANCE.spawn(player, SPAWN_ROOM);
+
         printWelcome();
 
         boolean finished = false;
+        // Every entered command is a Minecraft tick
         while (!finished) {
             Command command = parser.getCommand();
-            // Simulate autonomous mobs by triggering mobs every command
-            // - essentially a Minecraft tick
+
+            this.checkWinCondition();
+            // Trigger mob actions every tick to simulate autonomy
             mobs.forEach(Mob::performAction);
+            mobs.forEach(Mob::autoMove);
 
             finished = processCommand(command);
         }
@@ -128,6 +137,10 @@ public class Game {
                 attack(command);
                 break;
 
+            case MAP:
+                System.out.println(player.getLocation());
+                break;
+
             case QUIT:
                 wantToQuit = quit(command);
                 break;
@@ -142,7 +155,7 @@ public class Game {
     private void printHelp() {
         System.out.println("Collect Blaze Powder (Village) + Ender Pearl (Enderman) to craft Eye of Ender.");
         System.out.println("Travel between rooms to find what you need.\n");
-        System.out.println("Current room: " + player.getLocation() + "\nYour command words are:");
+        System.out.println(player.getLocation() + "\nYour command words are:");
         parser.showCommands();
     }
 
@@ -166,16 +179,15 @@ public class Game {
                         (destination) -> {
                             System.out.println(destination);
 
-                            switch (destination) {
-                                case Room.NETHER -> {
-                                    this.teleportToRandomRoom();
-                                    // Check for win condition again as user could end up
-                                    // in End Portal room
-                                    this.checkWinCondition();
-                                }
-                                case Room.END_PORTAL_ROOM -> {
-                                    this.checkWinCondition();
-                                }
+                            // Nether room is for teleporting
+                            if (destination == Room.NETHER) {
+                                player.teleportToRandomRoom().ifPresentOrElse(
+                                        (dest) -> {
+                                            System.out.println("* Teleporting to " + dest.name() + " *");
+                                            System.out.println(dest);
+                                        },
+                                        () -> System.out.println("Looks like there's nowhere to teleport to")
+                                );
                             }
                         },
                         () -> {
@@ -319,43 +331,19 @@ public class Game {
     }
 
     /**
-     * Teleport player to random room - intended for the Nether room.
-     */
-    private void teleportToRandomRoom() {
-        Room currentRoom = player.getLocation();
-        Room[] availableRooms = Arrays.stream(Room.values())
-                .filter(room -> !room.equals(currentRoom)) // don't teleport to the same room
-                .toArray(Room[]::new);
-
-        if (availableRooms.length == 0) {
-            System.out.println("No other rooms to teleport to!");
-            return;
-        }
-
-        // Select a random room
-        Random random = new Random();
-        Room randomRoom = availableRooms[random.nextInt(availableRooms.length)];
-
-        player.setLocation(randomRoom);
-
-        System.out.println("* Teleporting to " + randomRoom.name() + " *");
-        System.out.println(randomRoom);
-    }
-
-    /**
      * Checks if the player has crafted the Eye of Ender and whether they are in the Portal Room.
      * If both conditions are met, the player gets the W.
      */
     private void checkWinCondition() {
         Optional<Item> eyeOfEnder = player.inventory.getItem(Item.EYE_OF_ENDER.getName());
 
-        // End Portal room required to win
+        // Not in End Portal room, bail
         if (player.getLocation() != Room.END_PORTAL_ROOM) return;
 
         // Check if the player has the Eye of Ender
-        eyeOfEnder.ifPresentOrElse((eye) -> {
+        eyeOfEnder.ifPresent((eye) -> {
             System.out.println("You've activated the End Portal! You win!");
             System.exit(0);
-        }, () -> System.out.println("You don't have the Eye of Ender. Craft it and head to the Portal Room to win."));
+        });
     }
 }

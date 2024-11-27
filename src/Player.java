@@ -14,7 +14,7 @@ public class Player extends Entity {
      * @param maxWeight The maximum weight the player's inventory can hold.
      */
     public Player(String name, int maxWeight) {
-        // Player starts off with no inventory
+        // Start with no inventory
         super(name, maxWeight, null);
     }
 
@@ -35,7 +35,7 @@ public class Player extends Entity {
 
         // If not, fail to kill
         if (ironSword.isEmpty()) {
-            return "You need an Iron Sword to kill this mob!";
+            return "You need an Iron Sword to kill mobs!";
         }
 
         // Else kill mob

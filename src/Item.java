@@ -5,6 +5,7 @@ public enum Item {
     ENDER_PEARL("ender_pearl", 3.0, true),
     IRON_SWORD("iron_sword", 5.0, true),
     BLAZE_POWDER("blaze_powder", 2.0, true),
+    ROTTEN_FLESH("rotten_flesh", 1.0, true),
     BLAZE_ROD("blaze_rod", 4.0, false),
     EYE_OF_ENDER("eye_of_ender", 5.0, false);
 

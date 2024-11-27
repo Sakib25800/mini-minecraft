@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class Entity {
@@ -99,7 +96,7 @@ public abstract class Entity {
                 .findFirst();
 
         if (item.isEmpty()) {
-            return name + " doesn't have the item: " + itemName;
+            return "Item not found: " + itemName;
         }
 
         // Remove item from inventory
@@ -135,6 +132,28 @@ public abstract class Entity {
         }
 
         return deathMessage;
+    }
+
+    /**
+     * Teleport Entity to a random room.
+     */
+    public Optional<Room> teleportToRandomRoom() {
+        Room currentRoom = getLocation();
+        Room[] availableRooms = Arrays.stream(Room.values())
+                .filter(room -> !room.equals(currentRoom)) // don't teleport to the same room
+                .toArray(Room[]::new);
+
+        if (availableRooms.length == 0) {
+            return Optional.empty();
+        }
+
+        // Select a random room
+        Random random = new Random();
+        Room randomRoom = availableRooms[random.nextInt(availableRooms.length)];
+
+        setLocation(randomRoom);
+
+        return Optional.of(randomRoom);
     }
 
     /**

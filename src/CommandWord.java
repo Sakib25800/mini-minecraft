@@ -8,6 +8,7 @@ public enum CommandWord {
     DROP("drop"),
     CRAFT("craft"),
     ATTACK("attack"),
+    MAP("map"),
     UNKNOWN("?");
 
     private final String commandString;
