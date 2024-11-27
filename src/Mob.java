@@ -35,7 +35,7 @@ abstract public class Mob extends Entity {
      * Autonomous movement using chance. Find nearest exits and take a random one.
      */
     public void autoMove() {
-        // Sometimes move, sometimes don't
+        // Sometimes move, sometimes don't to simulate autonomy
         if (RANDOM.nextDouble() > this.movementProbability) {
             return;
         }
@@ -47,7 +47,7 @@ abstract public class Mob extends Entity {
         if (exits.isEmpty()) return;
 
         Direction randomExit = new ArrayList<>(exits).get(RANDOM.nextInt(exits.size()));
-        
+
         // Move to random location
         this.move(randomExit).ifPresent(
                 newRoom -> System.out.println("* " + getName() + " has moved to " + newRoom.name() + " *")

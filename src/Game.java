@@ -28,26 +28,26 @@ public class Game {
     }
 
     /**
-     * Initialises all mobs in the game and spawns them.
-     */
-    private void initMobs() {
-        Enderman enderman = new Enderman();
-        Zombie zombie = new Zombie();
-
-        mobs.add(enderman);
-        mobs.add(zombie);
-
-        LocationManager.INSTANCE.spawn(enderman, Room.FOREST);
-        LocationManager.INSTANCE.spawn(zombie, Room.PLAINS);
-    }
-
-    /**
      * Initialises all items in the game and places them.
      */
     private void initRoomItems() {
         Room.VILLAGE.items.addItem(Item.BLAZE_POWDER);
         Room.PLAINS.items.addItem(Item.BLAZE_ROD);
         Room.STRONGHOLD.items.addItem(Item.IRON_SWORD);
+    }
+    
+    /**
+     * Initialises all mobs in the game and spawns them.
+     */
+    private void initMobs() {
+        Mob enderman = new Mobs.Enderman();
+        Mob zombie = new Mobs.Zombie();
+
+        mobs.add(enderman);
+        mobs.add(zombie);
+
+        LocationManager.INSTANCE.spawn(enderman, Room.FOREST);
+        LocationManager.INSTANCE.spawn(zombie, Room.PLAINS);
     }
 
     /**
