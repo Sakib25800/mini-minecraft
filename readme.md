@@ -2,8 +2,7 @@
 
 ## Game Overview
 
-A text-based adventure game where the player must collect Ender Eyes to activate the End Portal. Steve needs to gather
-blaze powder, find a stronghold, and activate the portal frame.
+A text-based adventure where Steve must gather Blaze Powder and an Ender Pearl to activate the End Portal frame.
 
 ## Map (6 Rooms)
 
@@ -43,7 +42,7 @@ blaze powder, find a stronghold, and activate the portal frame.
 
 ### Forest
 
-- Items: Ender Pearl (3kg)
+- Items: None
 - Description: Dark forest where Enderman build
 - Mobs: Enderman
 
@@ -65,10 +64,6 @@ blaze powder, find a stronghold, and activate the portal frame.
 
 ## Game Mechanics
 
-### Inventory System
-
-- Steve can only carry one instance of a given item
-
 ### Weight System
 
 - Maximum carrying capacity: 5kg
@@ -88,6 +83,7 @@ To win, the player must:
 
 - Base commands: `go`, `back`, `quit`, `help`
 - New commands:
+    - `map`: Show current location
     - `pick [item]`: Pick up an item from floor
     - `drop [item]`: Drop an item from inventory
     - `inventory`: Show current items and total weight

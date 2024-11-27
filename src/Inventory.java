@@ -125,10 +125,10 @@ public class Inventory {
 
     @Override
     public String toString() {
-        // Create the string for the items in the inventory
+        // Create the string for the items in the inventory, separated by spaces
         String itemsList = this.items.entrySet().stream()
                 .map(entry -> entry.getKey() + " (" + entry.getValue().getWeight() + "kg)")
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(" ")); // Using space as separator
 
         // Get current inventory weight and max capacity
         double currentWeight = getCurrentInventoryWeight();
