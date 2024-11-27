@@ -4,7 +4,7 @@
 
 A text-based adventure where Steve must gather Blaze Powder and an Ender Pearl to activate the End Portal frame.
 
-## Map (6 Rooms)
+## Map
 
 ```
                  VILLAGE
